@@ -10,6 +10,7 @@ import { Box } from "@material-ui/core";
 import Hidden from "@material-ui/core/Hidden";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { signin, signout, useSession } from "next-auth/client";
 import SideNav from "./SideNav";
 const useStyles = makeStyles((theme) => ({
   menuButton: {
@@ -22,6 +23,8 @@ const useStyles = makeStyles((theme) => ({
 
 const Navbar = () => {
   const classes = useStyles();
+  // useSession
+  const [session] = useSession();
 
   // drawer handling
   const [isOpen, setIsOpen] = React.useState(false);
@@ -36,12 +39,20 @@ const Navbar = () => {
     setIsOpen(value);
   };
 
+  // defining here to reuse in drawer
+  const handleSignIn = (e) => signin("google");
+  const handleSignOut = (e) => signout();
+
   // media query helper
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.down("sm"));
   const center = matches ? "center" : "inherit";
 
-  const loggedOutLinks = <Button color="inherit">Login</Button>;
+  const loggedOutLinks = (
+    <Button onClick={handleSignIn} color="inherit">
+      Login
+    </Button>
+  );
   const loggedInLinks = (
     <>
       <Button underline="none" component={Link} href="/dreams" color="inherit">
@@ -63,7 +74,7 @@ const Navbar = () => {
       >
         New Dream
       </Button>
-      <Button underline="none" color="inherit">
+      <Button onClick={handleSignOut} underline="none" color="inherit">
         Logout
       </Button>
     </>
@@ -71,7 +82,13 @@ const Navbar = () => {
 
   return (
     <>
-      <SideNav isOpen={isOpen} toggleDrawer={toggleDrawer} />
+      <SideNav
+        handleSignIn={handleSignIn}
+        handleSignOut={handleSignOut}
+        isOpen={isOpen}
+        toggleDrawer={toggleDrawer}
+        session={session}
+      />
       <AppBar position="static">
         <Toolbar>
           <Hidden implementation="css" mdUp>
@@ -85,14 +102,13 @@ const Navbar = () => {
               <MenuIcon />
             </IconButton>
           </Hidden>
-
           <Typography align={center} variant="h5" className={classes.title}>
             <Link href="/" color="inherit" underline="none">
               DreamBook
             </Link>
           </Typography>
           <Hidden implementation="css" smDown>
-            <Box>{loggedInLinks}</Box>
+            <Box>{!session ? loggedOutLinks : loggedInLinks}</Box>
           </Hidden>
         </Toolbar>
       </AppBar>

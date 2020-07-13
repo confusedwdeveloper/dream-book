@@ -18,16 +18,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SideNav = ({ toggleDrawer, isOpen }) => {
+const SideNav = ({
+  toggleDrawer,
+  isOpen,
+  session,
+  handleSignIn,
+  handleSignOut,
+}) => {
   const classes = useStyles();
-  const logedOutLinks = (
+  const loggedOutLinks = (
     <div
       className={classes.list}
       role="presentation"
       onClick={toggleDrawer(false)}
       onKeyDown={toggleDrawer(false)}
     >
-      <Button color="inherit">Login</Button>;
+      <Button onClick={handleSignIn} color="inherit">
+        Login
+      </Button>
     </div>
   );
   const loggedInLinks = (
@@ -56,7 +64,7 @@ const SideNav = ({ toggleDrawer, isOpen }) => {
       >
         New Dream
       </Button>
-      <Button underline="none" color="inherit">
+      <Button onClick={handleSignOut} underline="none" color="inherit">
         Logout
       </Button>
     </div>
@@ -68,7 +76,7 @@ const SideNav = ({ toggleDrawer, isOpen }) => {
       open={isOpen}
       onClose={toggleDrawer(false)}
     >
-      {loggedInLinks}
+      {!session ? loggedOutLinks : loggedInLinks}
     </Drawer>
   );
 };
