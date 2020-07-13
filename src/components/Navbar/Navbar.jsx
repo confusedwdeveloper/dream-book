@@ -11,7 +11,9 @@ import Hidden from "@material-ui/core/Hidden";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { signin, signout, useSession } from "next-auth/client";
-import SideNav from "./SideNav";
+import dynamic from "next/dynamic";
+
+const SideNav = dynamic(() => import("./SideNav"));
 const useStyles = makeStyles((theme) => ({
   menuButton: {
     marginRight: theme.spacing(2),
