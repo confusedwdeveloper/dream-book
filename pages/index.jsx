@@ -1,8 +1,7 @@
 import Layout from "../src/components/Layout/Layout";
 import { makeStyles } from "@material-ui/core";
 import GoogleButton from "react-google-button";
-import { signin, useSession } from "next-auth/client";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import { signin, getSession } from "next-auth/client";
 import Paper from "@material-ui/core/Paper";
 import Router from "next/router";
 
@@ -45,9 +44,8 @@ const useStyles = makeStyles({
   },
 });
 
-const Home = () => {
+const Home = ({ session }) => {
   const classes = useStyles();
-  const [session, loading] = useSession();
 
   //redirect
   React.useEffect(() => {
@@ -60,17 +58,21 @@ const Home = () => {
     <Layout className={classes.background}>
       <div className={classes.overlay} />
       <Paper className={classes.paper} elevation={4}>
-        {loading ? (
-          <CircularProgress classes={{ root: classes.button }} />
-        ) : (
-          <GoogleButton
-            className={classes.button}
-            onClick={() => signin("google")}
-          />
-        )}
+        <GoogleButton
+          className={classes.button}
+          onClick={() => signin("google")}
+        />
       </Paper>
     </Layout>
   );
 };
 
 export default Home;
+
+export const getServerSideProps = async (ctx) => {
+  return {
+    props: {
+      session: await getSession(ctx),
+    },
+  };
+};
