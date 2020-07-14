@@ -1,9 +1,12 @@
 import { getSession } from "next-auth/client";
 import Layout from "../src/components/Layout/Layout";
 import Router from "next/router";
+import { Box } from "@material-ui/core";
 
 const newDream = ({ session }) => {
   const user = session?.user;
+
+  //redirect
   React.useEffect(() => {
     if (!session) {
       Router.push("/");
@@ -12,9 +15,11 @@ const newDream = ({ session }) => {
 
   return (
     <Layout title="Create New Dream">
-      <img src={user?.image} alt="" />
-      <h1>{user?.name}</h1>
-      <p>{user?.email}</p>
+      <Box component="article">
+        <img src={user?.image} alt="" />
+        <h1>{user?.name}</h1>
+        <p>{user?.email}</p>
+      </Box>
     </Layout>
   );
 };
