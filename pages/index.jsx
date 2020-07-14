@@ -1,11 +1,12 @@
 import Layout from "../src/components/Layout/Layout";
-import { Button, Typography, makeStyles } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import GoogleButton from "react-google-button";
-import { signin, signout, useSession } from "next-auth/client";
+import { signin, useSession } from "next-auth/client";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Paper from "@material-ui/core/Paper";
+import Router from "next/router";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
   button: {
     display: "block",
     marginTop: 20,
@@ -13,43 +14,59 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: "auto",
   },
   paper: {
-    padding: "3rem 0",
-    margin: "auto",
-    width: 320,
-    marginTop: "10%",
+    padding: "2rem 0",
+    width: 300,
+    background: "rgba(0,0,0,0.4)",
   },
-}));
+  background: {
+    background: `url(drean.webp) no-repeat center center/cover`,
+    width: "100vw",
+    height: "100vh",
+    padding: 0,
+    margin: 0,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: -5,
+    maxWidth: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  overlay: {
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    zIndex: -3,
+  },
+});
 
 const Home = () => {
   const classes = useStyles();
   const [session, loading] = useSession();
 
+  //redirect
+  React.useEffect(() => {
+    if (session) {
+      Router.push("/my-dreams");
+    }
+  }, [session]);
+
   return (
-    <Layout>
+    <Layout className={classes.background}>
+      <div className={classes.overlay} />
       <Paper className={classes.paper} elevation={4}>
         {loading ? (
           <CircularProgress classes={{ root: classes.button }} />
         ) : (
-          <>
-            <Typography align="center" color="primary" variant="h3">
-              Sign {session ? "Out" : "In"}
-            </Typography>
-            {session ? (
-              <Button
-                classes={{ root: classes.button }}
-                onClick={signout}
-                variant="contained"
-                color="primary"
-              >
-                Sign Out
-              </Button>
-            ) : (
-              <GoogleButton
-                className={classes.button}
-                onClick={() => signin("google")}
-              />
-            )}
-          </>
+          <GoogleButton
+            className={classes.button}
+            onClick={() => signin("google")}
+          />
         )}
       </Paper>
     </Layout>
